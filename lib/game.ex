@@ -74,6 +74,11 @@ defmodule Game do
     do_find_cluster([x - 1, y - 1], coin_selected, grid)
   end
 
+  defp do_find_cluster(cluster, [-1, _y], coin_selected, grid), do: cluster
+  defp do_find_cluster(cluster, [_x, -1], coin_selected, grid), do: cluster
+  defp do_find_cluster(cluster, [20, _y], coin_selected, grid), do: cluster
+  defp do_find_cluster(cluster, [_x, 20], coin_selected, grid), do: cluster
+
   defp do_find_cluster(cluster, [x, y], coin_selected, grid) do
     coin = coin_at [x, y], grid
     index = Enum.find_index cluster, fn(i) -> i == [x, y] end
