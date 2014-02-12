@@ -54,7 +54,7 @@ defmodule Game do
   """
   def select_box([x, y], grid) do
     coin_selected = coin_at [x, y], grid
-    cluster = do_find_adjacent_same_colored_coins([x, y], coin_selected, grid, []) |> Enum.sort
+    cluster = do_find_adjacent_same_colored_coins([], [x, y], coin_selected, grid) |> Enum.sort
     do_calculate_score_and_rearrange_grid(cluster, grid)
   end
 
@@ -62,22 +62,22 @@ defmodule Game do
     Enum.at(grid, y) |> Enum.at x
   end
 
-  defp do_find_adjacent_same_colored_coins([x, y], coin_selected, grid, cluster) do
-    cluster = do_find_cluster([x + 1, y + 1], coin_selected, grid, cluster)
-    cluster = do_find_cluster([x + 1, y + 0], coin_selected, grid, cluster)
-    cluster = do_find_cluster([x + 1, y - 1], coin_selected, grid, cluster)
-    cluster = do_find_cluster([x + 0, y + 1], coin_selected, grid, cluster)
-    cluster = do_find_cluster([x + 0, y + 0], coin_selected, grid, cluster)
-    cluster = do_find_cluster([x + 0, y - 1], coin_selected, grid, cluster)
-    cluster = do_find_cluster([x - 1, y + 1], coin_selected, grid, cluster)
-    cluster = do_find_cluster([x - 1, y + 0], coin_selected, grid, cluster)
-    do_find_cluster([x - 1, y - 1], coin_selected, grid, cluster)
+  defp do_find_adjacent_same_colored_coins(cluster, [x, y], coin_selected, grid) do
+    do_find_cluster(cluster, [x + 1, y + 1], coin_selected, grid) |>
+    do_find_cluster([x + 1, y + 0], coin_selected, grid) |>
+    do_find_cluster([x + 1, y - 1], coin_selected, grid) |>
+    do_find_cluster([x + 0, y + 1], coin_selected, grid) |>
+    do_find_cluster([x + 0, y + 0], coin_selected, grid) |>
+    do_find_cluster([x + 0, y - 1], coin_selected, grid) |>
+    do_find_cluster([x - 1, y + 1], coin_selected, grid) |>
+    do_find_cluster([x - 1, y + 0], coin_selected, grid) |>
+    do_find_cluster([x - 1, y - 1], coin_selected, grid)
   end
 
-  defp do_find_cluster([x, y], coin_selected, grid, cluster) do
+  defp do_find_cluster(cluster, [x, y], coin_selected, grid) do
     coin = coin_at [x, y], grid
     index = Enum.find_index cluster, fn(i) -> i == [x, y] end
-    if coin_selected == coin and !index, do: do_find_adjacent_same_colored_coins([x, y], coin_selected, grid, [[x, y] | cluster]), else: cluster
+    if coin_selected == coin and !index, do: do_find_adjacent_same_colored_coins([[x, y] | cluster], [x, y], coin_selected, grid), else: cluster
   end
 
   defp do_calculate_score_and_rearrange_grid(cluster, grid) do
